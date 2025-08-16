@@ -51,6 +51,19 @@ const servicesImages = [
 export default function ServicesCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Client-side window size detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   // Mobilde 3, masaüstünde 4 görsel göster
   const itemsPerView = 4
@@ -64,23 +77,23 @@ export default function ServicesCarousel() {
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => {
-        const max = window.innerWidth < 768 ? maxMobileIndex : maxIndex
+        const max = isMobile ? maxMobileIndex : maxIndex
         return (prev + 1) % (max + 1)
       })
     }, 15000)
 
     return () => clearInterval(interval)
-  }, [isAutoPlaying, maxIndex, maxMobileIndex])
+  }, [isAutoPlaying, maxIndex, maxMobileIndex, isMobile])
 
   const nextSlide = () => {
-    const max = window.innerWidth < 768 ? maxMobileIndex : maxIndex
+    const max = isMobile ? maxMobileIndex : maxIndex
     setCurrentIndex((prev) => (prev + 1) % (max + 1))
     setIsAutoPlaying(false)
     setTimeout(() => setIsAutoPlaying(true), 30000)
   }
 
   const prevSlide = () => {
-    const max = window.innerWidth < 768 ? maxMobileIndex : maxIndex
+    const max = isMobile ? maxMobileIndex : maxIndex
     setCurrentIndex((prev) => (prev - 1 + (max + 1)) % (max + 1))
     setIsAutoPlaying(false)
     setTimeout(() => setIsAutoPlaying(true), 30000)
@@ -93,7 +106,7 @@ export default function ServicesCarousel() {
         <div
           className="flex transition-transform duration-500 ease-in-out"
           style={{
-            transform: `translateX(-${currentIndex * (100 / (window.innerWidth < 768 ? mobileItemsPerView : itemsPerView))}%)`,
+            transform: `translateX(-${currentIndex * (100 / (isMobile ? mobileItemsPerView : itemsPerView))}%)`,
           }}
         >
           {servicesImages.map((image, index) => (
@@ -135,14 +148,14 @@ export default function ServicesCarousel() {
         size="icon"
         className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-700 hover:text-orange-600 shadow-lg w-8 h-8 md:w-10 md:h-10 rounded-full"
         onClick={nextSlide}
-        disabled={currentIndex === (window.innerWidth < 768 ? maxMobileIndex : maxIndex)}
+        disabled={currentIndex === (isMobile ? maxMobileIndex : maxIndex)}
       >
         <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
       </Button>
 
       {/* Dots Indicator */}
       <div className="flex justify-center mt-4 md:mt-6 space-x-1 md:space-x-2">
-        {Array.from({ length: (window.innerWidth < 768 ? maxMobileIndex : maxIndex) + 1 }).map((_, index) => (
+        {Array.from({ length: (isMobile ? maxMobileIndex : maxIndex) + 1 }).map((_, index) => (
           <button
             key={index}
             className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-all duration-300 ${
