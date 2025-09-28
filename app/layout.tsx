@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "MAGEM - Mağusa Gelişim Merkezi",
   description: "Mağusa Gelişim Merkezi, sanat, teknoloji ve kişisel gelişim alanlarında programlar sunar.",
-    generator: 'v0.dev'
+    generator: 'magem'
 }
 
 export default function RootLayout({
